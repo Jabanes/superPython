@@ -7,8 +7,9 @@ itemsMenu = [
     {"name" : "eggs", "price" : 8, "is_dairy" : False },
     {"name" : "bread", "price" : 4, "is_dairy" : False }
  ]
+
 cart = []
-wallet = 0
+wallet = 100
 total = 0
 class Actions(Enum):
     ADD = 1
@@ -19,15 +20,19 @@ class Actions(Enum):
     EXIT = 6
 
 def addToCart():
+    global total
+    global wallet
     itemToAdd = int(input("Select an item to add (by index): "))
     if itemsMenu[itemToAdd] in itemsMenu:
         quantityToAdd = int(input(f"How many {itemsMenu[itemToAdd]['name']}/s do you want to buy?"))
         cart.append({"name" : itemsMenu[itemToAdd]['name'], "price" : itemsMenu[itemToAdd]['price'],"quantity" : quantityToAdd, "is_dairy" : itemsMenu[itemToAdd]['is_dairy']})
         print(f"Added {itemsMenu[itemToAdd]['name']} to the cart!")
+
+    total += itemsMenu[itemToAdd]['price'] * quantityToAdd
+   
+    displayCart()
+    return total, wallet
     
-    print("Your cart:")
-    for item in cart:
-         print(f"x{item['quantity']} {item['name']}", sep=",")
 
 def removeFromCart():
     if cart != []: 
@@ -41,21 +46,64 @@ def removeFromCart():
         print(f"removed {cart[itemToRemove]['name']} from the cart!")
         cart.pop(itemToRemove)
      
-        print("Your cart:")
-        for item in cart:
-            print(f"x{item['quantity']} {item['name']}", sep=",")
+        displayCart()
 
     else:
         print("Cart is empty!")
 
 def displayCart():
-    pass
+    print("Your cart:")
+    for index, item in enumerate(cart):
+         print(f"{index}: x{item['quantity']} {item['name']}", sep=",")
 
 def FindItemInCart():
-    pass
+    displayCart
+    itemTofind = int(input("What item are you serching for? (by index): "))
+
+    try:
+        if cart[itemTofind] in cart:
+            print(f"item found, you have x{cart[itemTofind]['quantity']} {cart[itemTofind]['name']}!")
+    except IndexError:
+        print("Item was not found!")
+
+       
+
 
 def Checkout():
-    pass
+    global cart
+    global wallet
+    global total
+    toContinue = True
+    print(f"wallet: {wallet}")
+    print(f"total: {total}")
+    proceed = input("Do you want to checkout(y/n)?: ")
+    proceed.lower
+    while toContinue:
+        
+        if proceed == "y" and total == 0:
+            print("You didnt buy anything...")
+            return
+
+        elif proceed == "y":
+            if wallet >= total:
+                wallet -= total
+                print("thank you for buying!")
+                print(f"You have {wallet}$ left in your wallet!")
+                cart = []
+                total = 0
+                return
+                
+            else:
+                print("Sorry, insufficent funds... maybe remove some items from your cart?")
+                return
+        
+        elif proceed == "n":
+            print("Cya!")
+            toContinue = False
+            return
+        else:
+            print("Invalid option")
+            proceed = input("Do you want to checkout(y/n)?: ").lower
 
 def menu():
     
